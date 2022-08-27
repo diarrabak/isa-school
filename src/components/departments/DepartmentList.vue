@@ -7,12 +7,15 @@
       :key="department.id"
     >
       <Department
-        :id="department.id"
-        :title="department.name"
-        :description="department.description"
+        :department="department"
       />
       <div class="btns">
-        <button @click="this.$router.push(`/new-department/${department.id}`)" class="btn btn-success">Update</button>
+        <button
+          @click="router.push(`/new-department/${department.id}`)"
+          class="btn btn-success"
+        >
+          Update
+        </button>
         <button @click="remove(department.id)" class="btn btn-danger">
           Delete
         </button>
@@ -21,50 +24,49 @@
   </ul>
   <div class="row">
     <div class="col-12 add">
-      <button @click="this.$router.push('/new-department')" class="btn btn-primary">Add New Department</button>
+      <button
+        @click="router.push('/new-department')"
+        class="btn btn-primary"
+      >
+        Add New Department
+      </button>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import Department from "./Department.vue";
 import DepartmentServices from "../../services/DepartmentServices";
-export default {
-  name: "DepartmentList",
-  components: {
-    Department,
-  },
+import { onMounted } from "@vue/runtime-core";
+import {ref} from "vue";
+import { useRouter } from "vue-router";
 
-  data() {
-    return {
-      departments: [],
-    };
-  },
-  created() {
-     this.getAllDepartments();
-  },
-  methods: {
-    remove(id) {
-      DepartmentServices.remove(id)
-        .then((res) => {
-          console.log(res.message);
-          this.getAllDepartments();
-        })
-        .catch((err) => console.log("Issue removing", err));
-    },
-    getAllDepartments() {
-      DepartmentServices.getDepartments()
-        .then((res) => {
-          this.departments = res.data.filter((depart) => depart.id < 15);
-          //   console.log(res.data);
-        })
-        .catch((err) => console.log(err));
-    },
-  },
-  watch: {
-   
-  },
-};
+const router=useRouter();
+
+let departments= ref([]);
+
+onMounted(() => {
+  getAllDepartments();
+});
+
+function remove(id) {
+  DepartmentServices.remove(id)
+    .then((res) => {
+      console.log(res.message);
+      getAllDepartments();
+    })
+    .catch((err) => console.log("Issue removing", err));
+}
+
+function getAllDepartments() {
+  DepartmentServices.getDepartments()
+    .then((res) => {
+      // departments.value = res.data.filter((depart) => depart.id < 15);
+      departments.value = res.data;
+      //   console.log(res.data);
+    })
+    .catch((err) => console.log(err));
+}
 </script>
 
 <style >

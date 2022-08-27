@@ -41,60 +41,60 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import DepartmentService from "../../services/DepartmentServices";
-export default {
-  name: "NewDepartment",
-  data() {
-    return {
-      department: {
-        name: "",
-        description: "",
-        picture: "",
-      },
-    };
-  },
-  mounted() {
-    if (!!this.$route.params.id) {
-      DepartmentService.getDepartmentById(this.$route.params.id)
-        .then((res) => {
-          console.log("res res", res.data);
-          this.department = res.data;
-        })
-        .catch((err) => console.log("no such department"));
-    }
-  },
-  methods: {
-    submit() {
-      if (
-        this.department.name === "" ||
-        this.department.description === "" ||
-        this.department.picture === ""
-      ) {
-        console.log("All fields required");
-        return;
-      }
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const id = route.params.id;
+const router=useRouter();
+const department = ref({
+  name: "",
+  description: "",
+  picture: "",
+});
 
-      if (!!this.$route.params.id) {
-        console.log(" depart", { ...this.department });
-        DepartmentService.updateDepartment(this.$route.params.id, { ...this.department })
-          .then((res) => {
-            console.log("new depart", res);
-            this.$router.push("/departments");
-          })
-          .catch((err) => console.log("error adding new department", err));
-      } else {
-        console.log(" depart", { ...this.department });
-        DepartmentService.createDepartment({ ...this.department })
-          .then((res) => {
-            console.log("new depart", res);
-            this.$router.push("/departments");
-          })
-          .catch((err) => console.log("error updating the department"));
-      }
-    },
-  },
-};
+onMounted(() => {
+  if (!!id) {
+    DepartmentService.getDepartmentById(id)
+      .then((res) => {
+        console.log("res res", res.data);
+        department.value = res.data;
+      })
+      .catch((err) => console.log("no such department", err));
+  }
+});
+
+function submit() {
+  if (
+    department.name === "" ||
+    department.description === "" ||
+    department.picture === ""
+  ) {
+    console.log("All fields required");
+    return;
+  }
+
+  if (!!id) {
+    console.log(" depart", { ...department.value });
+    DepartmentService.updateDepartment(id, {
+      ...department.value,
+    })
+      .then((res) => {
+        console.log("new depart", res);
+        router.push("/departments");
+      })
+      .catch((err) => console.log("error adding new department", err));
+  } else {
+    console.log(" depart", { ...department.value });
+    DepartmentService.createDepartment({ ...department.value })
+      .then((res) => {
+        console.log("new depart", res);
+        router.push("/departments");
+      })
+      .catch((err) => console.log("error updating the department", err));
+  }
+}
 </script>
 
 <style scoped>

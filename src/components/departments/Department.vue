@@ -1,33 +1,35 @@
 <template>
-<main @click="this.$router.push(`/departments/${id}`)">
- <h2>{{ title }}</h2>
-  <p>{{ description }}</p>
-</main>
- 
+  <main @click="router.push(`/departments/${department.id}`)">
+    <h2>{{ department.name }}</h2>
+    <p>{{ department.description }}</p>
+  </main>
 </template>
 
-<script>
-export default {
-  name: "Department",
-  props: {
-    id:{
-      type:Number,
-      required:true,
+<script setup>
+import { defineProps } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const props = defineProps({
+  department: {
+    id: {
+      type: Number,
+      required: true,
     },
-    title: {
+    name: {
       type: String,
       required: true,
     },
-     description: {
+    description: {
       type: String,
       required: true,
     },
   },
-};
+});
 </script>
 
 <style scoped>
-main{
+main {
   cursor: pointer;
 }
 </style>
