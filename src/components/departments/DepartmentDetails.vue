@@ -6,25 +6,21 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "@vue/reactivity";
+import { onMounted } from "@vue/runtime-core";
+import { useRoute } from "vue-router";
 import DepartmentService from "../../services/DepartmentServices";
-export default {
-  name: "DepartmentDetails",
 
-  data() {
-    return {
-      department: {},
-    };
-  },
 
-  mounted() {
-    DepartmentService.getDepartmentById(this.$route.params.id)
-      .then((res) => (this.department = res.data))
-      .catch((err) => console.log(err));
-  },
-
-  methods: {},
-};
+const route=useRoute();
+const id=route.params.id;
+const department = ref({});
+onMounted(() => {
+  DepartmentService.getDepartmentById(id)
+    .then((res) => (department.value = res.data))
+    .catch((err) => console.log(err));
+});
 </script>
 
 <style lang="css" scoped>
