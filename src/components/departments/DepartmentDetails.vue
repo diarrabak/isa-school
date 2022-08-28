@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <h1>Detail about department {{ this.$route.params.id }}</h1>
+    <h1>Detail about department {{ id }}</h1>
     <div class="col-12">{{ department.name }}</div>
     <div class="col-12">{{ department.description }}</div>
   </div>
@@ -8,18 +8,18 @@
 
 <script setup>
 import { ref } from "@vue/reactivity";
-import { onMounted } from "@vue/runtime-core";
+import { computed, onMounted } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
 import DepartmentService from "../../services/DepartmentServices";
+import { useDepartmentStore } from "../../stores/department";
 
+const departmentStore = useDepartmentStore();
+const route = useRoute();
+const id = route.params.id;
+const department = computed(() => departmentStore.currentDepartment);
 
-const route=useRoute();
-const id=route.params.id;
-const department = ref({});
 onMounted(() => {
-  DepartmentService.getDepartmentById(id)
-    .then((res) => (department.value = res.data))
-    .catch((err) => console.log(err));
+  departmentStore.getCurrentDepartment(id);
 });
 </script>
 

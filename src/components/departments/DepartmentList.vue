@@ -6,9 +6,7 @@
       v-for="department in departments"
       :key="department.id"
     >
-      <Department
-        :department="department"
-      />
+      <Department :department="department" />
       <div class="btns">
         <button
           @click="router.push(`/new-department/${department.id}`)"
@@ -24,10 +22,7 @@
   </ul>
   <div class="row">
     <div class="col-12 add">
-      <button
-        @click="router.push('/new-department')"
-        class="btn btn-primary"
-      >
+      <button @click="router.push('/new-department')" class="btn btn-primary">
         Add New Department
       </button>
     </div>
@@ -37,36 +32,28 @@
 <script setup>
 import Department from "./Department.vue";
 import DepartmentServices from "../../services/DepartmentServices";
-import { onMounted } from "@vue/runtime-core";
-import {ref} from "vue";
+import { computed, onMounted } from "@vue/runtime-core";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useDepartmentStore } from "../../stores/department";
 
-const router=useRouter();
+const departmentStore = useDepartmentStore();
 
-let departments= ref([]);
+const router = useRouter();
+
+// let departments = computed(() => departmentStore.departments);
+
+let departments = computed(() => departmentStore.getFirstDepartments);
+console.log("departments", departments);
 
 onMounted(() => {
-  getAllDepartments();
+  departmentStore.getDepartments();
 });
 
 function remove(id) {
-  DepartmentServices.remove(id)
-    .then((res) => {
-      console.log(res.message);
-      getAllDepartments();
-    })
-    .catch((err) => console.log("Issue removing", err));
+  departmentStore.removeDepartment(id);
 }
 
-function getAllDepartments() {
-  DepartmentServices.getDepartments()
-    .then((res) => {
-      // departments.value = res.data.filter((depart) => depart.id < 15);
-      departments.value = res.data;
-      //   console.log(res.data);
-    })
-    .catch((err) => console.log(err));
-}
 </script>
 
 <style >

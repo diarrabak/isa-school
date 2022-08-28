@@ -13,7 +13,7 @@ export default class DepartmentService {
     }
 
     static async remove(id) {
-        const result = await axios.delete(`${import.meta.env.VITE_APP_BASE_ENDPOINT}/${id}`);
+        const result = await axios.delete(`${import.meta.env.VITE_APP_BASE_ENDPOINT}/departments/${id}`);
         return result.data;
     }
 
